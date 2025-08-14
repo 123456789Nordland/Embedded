@@ -5,23 +5,11 @@
  *      Author: malya
  */
 
-
-
-
 #include "can_bms.h"
-// ggf. auch HAL oder LL Includes
-
-UART::UART() {
-    // Konstruktorcode
-}
-
-void UART::init() {
-    // GPIO/UART konfigurieren
-}
-
-void UART::sendChar(char c) {
-    // Zeichen senden
-}
 
 
+// can
+can_msg test_msg(100, 8,  CAN_ID_STD, 0x321 , CAN_RTR_DATA);
 
+// can J1939
+can_msg_HVESSC1_PGN_6912 k_msg;
