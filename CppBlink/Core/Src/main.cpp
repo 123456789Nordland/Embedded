@@ -72,7 +72,8 @@ int main() {
     HAL_TIM_Base_Start_IT(&htim1);
       HAL_CAN_Start(&hcan2);
 
-      array[1] = CRC32_TABLE[1];
+      //array[1] = CRC32_TABLE[1];
+      crc32k9_init_table_ram(array,  CRC32K9_POLYNOMIAL, 256);
 
     while (1) {
       /*  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);

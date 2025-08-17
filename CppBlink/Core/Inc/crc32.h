@@ -39,7 +39,25 @@ constexpr std::array<uint32_t, TABLE_SIZE> crc32k9_init_table()
 	 return table;
 }
 
+void crc32k9_init_table_ram(uint32_t arr[TABLE_SIZE], uint32_t polynomial, uint32_t table_size)
+{
+	for (uint32_t i = 0; i < table_size; i++)
+		{
+			uint32_t crc = i;							// Index
+			for (int j = 0; j < 8; j++){
+				if(crc & 1){
+					crc = (crc >> 1)^ polynomial;
+				} else {
+					crc >>= 1;		// oder Bitverschiebung
+				}
+			}
+			arr[i] = crc;
+		}
 
+
+}
+
+extern void crc32k9_init_table_ram(uint32_t arr[TABLE_SIZE], uint32_t polynomial, uint32_t table_size);
 
 constexpr auto CRC32_TABLE = crc32k9_init_table();
 #endif /* INC_CRC32_H_ */
