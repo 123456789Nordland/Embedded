@@ -1471,8 +1471,7 @@ uint32_t HAL_CAN_IsTxMessagePending(const CAN_HandleTypeDef *hcan, uint32_t TxMa
   * @param  TxMailbox Tx Mailbox where the timestamp of message sent will be
   *         read.
   *         This parameter can be one value of @arg CAN_Tx_Mailboxes.
-  * @retval Timestamp of message
- from Tx Mailbox.
+  * @retval Timestamp of message sent from Tx Mailbox.
   */
 uint32_t HAL_CAN_GetTxTimestamp(const CAN_HandleTypeDef *hcan, uint32_t TxMailbox)
 {

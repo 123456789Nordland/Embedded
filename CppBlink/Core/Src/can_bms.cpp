@@ -9,7 +9,11 @@
 
 
 // can
-can_msg test_msg(100, 8,  CAN_ID_STD, 0x321 , CAN_RTR_DATA);
+can_msg_j1939 test_msg(100, 8,  CAN_ID_STD, 0x321 , CAN_RTR_DATA);
 
 // can J1939
-can_msg_HVESSC1_PGN_6912 k_msg;
+HVESSC1_PGN_6912_Rx trm_HVESSC1_PGN_6912;
+HVESSC1_PGN_6912_SHM_Rx trm_HVESSC1_PGN_6912_SHM;
+
+// transmit!
+can_msg_transmit trm_can1;

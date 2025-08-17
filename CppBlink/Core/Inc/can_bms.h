@@ -1,26 +1,31 @@
 #ifndef INC_CAN_BMS_H_
 #define INC_CAN_BMS_H_
 
-#endif /* INC_CAN_BMS_H_ */
+
 
 #pragma once
 #include "main.h"
 
 
 constexpr uint16_t ID = 0x321;
-
+const uint32_t CYCLE_TIME= 20;
 constexpr uint32_t HVESSC1_PGN_6912_SHM_Rx_ID = 0x040EF321;
 constexpr uint32_t HVESSC1_PGN_6912_Rx_ID = 0x041BF321;
 
-class can_msg
+constexpr uint8_t PGN_6912_SDM_SA = 0x21;
+constexpr uint8_t PGN_6912_SDM_PS = 0xF3;
+constexpr uint8_t PGN_6912_SDM_PF = 0x1B;
+
+
+class can_msg_j1939
 {
 public:
 
-    can_msg(uint32_t TransmitRate, uint32_t DLC, uint32_t IDtype, uint32_t ID, uint32_t DataFrame)
+	can_msg_j1939(uint32_t TransmitRate, uint32_t DLC, uint32_t IDtype, uint32_t ID, uint32_t DataFrame)
     {
         TxHeader.DLC = DLC;
         TxHeader.IDE = IDtype;
-        TxHeader.StdId = ID;
+        TxHeader.ExtId = ID;
         TxHeader.RTR = DataFrame;
         this->TransmitRate = TransmitRate;
     }
@@ -41,11 +46,11 @@ protected:
 };
 
 // HVESSC1_PGN_6912     20 mS
-class can_msg_HVESSC1_PGN_6912 : public can_msg
+class HVESSC1_PGN_6912_Rx : public can_msg_j1939
 {
 public:
 
-	 can_msg_HVESSC1_PGN_6912():can_msg(20, 8,  CAN_ID_STD, HVESSC1_PGN_6912_Rx_ID , CAN_RTR_DATA){};
+	HVESSC1_PGN_6912_Rx():can_msg_j1939(20, 8,  CAN_ID_STD, HVESSC1_PGN_6912_Rx_ID , CAN_RTR_DATA){};
 
 	 void fillTxData() override
 	 {
@@ -83,5 +88,62 @@ private:
 
 
 };
-extern can_msg test_msg;
-extern can_msg_HVESSC1_PGN_6912 k_msg;
+
+
+// HVESSC1_PGN_6912  SHM
+class HVESSC1_PGN_6912_SHM_Rx : public can_msg_j1939
+{
+public:
+
+	HVESSC1_PGN_6912_SHM_Rx():can_msg_j1939(20, 8,  CAN_ID_STD, HVESSC1_PGN_6912_Rx_ID , CAN_RTR_DATA){};
+
+	 void fillTxData() override
+	 {
+	    TxData[0] = SHM_Counter_1;
+	    TxData[1] =  (~PGN_6912_SDM_SA & 0xFF);
+	    TxData[2]  = (~PGN_6912_SDM_PS & 0xFF);
+	    TxData[3] = (~PGN_6912_SDM_PF & 0xFF);
+	    TxData[4]  = (uint8_t)crc32_sum;
+	    TxData[5]  = (uint8_t)(crc32_sum >> 8);
+	    TxData[6] = (uint8_t)(crc32_sum >> 16);
+	    TxData[7] = (uint8_t)(crc32_sum >> 24);
+	         }
+
+   //setters
+
+
+private:
+
+    // Variablen
+	 uint8_t SHM_Counter_1;
+	 uint32_t crc32_sum;
+
+
+};
+
+// Transmit************************************************************
+class can_msg_transmit {
+public:
+	void trm_can_msg_j1939(can_msg_j1939 *msg, uint32_t cyclusTime){
+
+		static uint32_t trm_cnt;
+		trm_cnt += CYCLE_TIME;
+
+			if (trm_cnt == msg->getTransmitRate())
+			{
+				msg->fillTxData();
+				if (HAL_CAN_AddTxMessage(&hcan2, msg->getTxHeader(), msg->getTxData(), msg->getTxMailbox()) != HAL_OK)
+					 {
+							            // Falls alle 3 Mailboxen voll sind oder Fehler
+					 }
+				trm_cnt = 0;}
+
+			}
+
+};
+extern can_msg_j1939 test_msg;
+extern HVESSC1_PGN_6912_Rx trm_HVESSC1_PGN_6912;
+extern HVESSC1_PGN_6912_SHM_Rx trm_HVESSC1_PGN_6912_SHM;
+extern can_msg_transmit trm_can1;
+
+#endif /* INC_CAN_BMS_H_ */

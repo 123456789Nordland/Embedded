@@ -4,7 +4,7 @@
  *  Created on: Aug 5, 2025
  *      Author: malya
  */
-
+#include "main.h"
 #ifndef INC_INIT_H_
 #define INC_INIT_H_
 
