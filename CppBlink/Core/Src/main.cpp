@@ -26,7 +26,10 @@ extern "C" {
 
 
 /* USER CODE BEGIN PV */
-uint32_t array[256];
+uint32_t crc32_array[TABLE_SIZE] = {0};
+uint8_t dataRx[8] = {0};
+const uint8_t* p_dataRx = dataRx;
+uint32_t crc32_sum;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -36,16 +39,19 @@ void MX_USB_HOST_Process(void);
 int val_1;
 
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
 	if (htim -> Instance == TIM1){
 		 //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
 
-		///// zum Testen
-		 val_1++;
+		trm_HVESSC1_PGN_6912.SetHS_HiUBusCnctCmd_Rx1(0);
 
-		 /////2
-		 trm_can1.trm_can_msg_j1939(&trm_HVESSC1_PGN_6912_SHM, CYCLE_TIME);		// message
-		 trm_can1.trm_can_msg_j1939(&trm_HVESSC1_PGN_6912, CYCLE_TIME);	// shm
+		trm_HVESSC1_PGN_6912.fillTxData();				// data is calculated, variables are not changing
+		p_dataRx = trm_HVESSC1_PGN_6912.getTxData();		// pointer to data of trm_HVESSC1_PGN_6912
+		crc32_sum = crc32_calc(p_dataRx, crc32_array);		// crc32 calculation
+
+		 trm_can2.trm_can_msg_j1939(&trm_HVESSC1_PGN_6912_SHM, CYCLE_TIME);		// message
+		 trm_can2.trm_can_msg_j1939(&trm_HVESSC1_PGN_6912, CYCLE_TIME);			// shm
 
 
 
@@ -70,10 +76,9 @@ int main() {
     __HAL_RCC_GPIOD_CLK_ENABLE();
 
     HAL_TIM_Base_Start_IT(&htim1);
-      HAL_CAN_Start(&hcan2);
+    HAL_CAN_Start(&hcan2);
 
-      //array[1] = CRC32_TABLE[1];
-      crc32k9_init_table_ram(array,  CRC32K9_POLYNOMIAL, 256);
+      crc32k9_init_table_ram(crc32_array, CRC32K9_POLYNOMIAL);
 
     while (1) {
       /*  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);

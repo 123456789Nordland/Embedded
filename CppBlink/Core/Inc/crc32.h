@@ -13,84 +13,44 @@
 #include <array>
 #include <cstdint>
 
-constexpr uint32_t CRC32K9_POLYNOMIAL =  0x6938392D;
-constexpr  uint32_t TABLE_SIZE = 256;
+#define  CRC32K9_POLYNOMIAL   0x6938392D
+#define   TABLE_SIZE  256
+#define  START_POLYNOMIAL  0xFFFFFFFF
 
-//CRC-Tabelle für schnelle Berechnung
-//uint32_t crc32k9_table[256];
 
 // Fuktion zur Initialisierung der CRC-32K/9-Tabelle
-constexpr std::array<uint32_t, TABLE_SIZE> crc32k9_init_table()
-{
-	  std::array<uint32_t, 256> table{};
-
-	for (uint32_t i = 0; i < 256; i++)
-	{
-		uint32_t crc = i;							// Index
-		for (int j = 0; j < 8; j++){
-			if(crc & 1){
-				crc = (crc >> 1)^ CRC32K9_POLYNOMIAL;
-			} else {
-				crc >>= 1;		// oder Bitverschiebung
-			}
-		}
-		table[i] = crc;
-	}
-	 return table;
-}
-
-void crc32k9_init_table_ram(uint32_t arr[TABLE_SIZE], uint32_t polynomial, uint32_t table_size)
-{
-	for (uint32_t i = 0; i < table_size; i++)
-		{
-			uint32_t crc = i;							// Index
-			for (int j = 0; j < 8; j++){
-				if(crc & 1){
-					crc = (crc >> 1)^ polynomial;
-				} else {
-					crc >>= 1;		// oder Bitverschiebung
-				}
-			}
-			arr[i] = crc;
-		}
-
-
-}
-
-extern void crc32k9_init_table_ram(uint32_t arr[TABLE_SIZE], uint32_t polynomial, uint32_t table_size);
-
-constexpr auto CRC32_TABLE = crc32k9_init_table();
-#endif /* INC_CRC32_H_ */
-
 /*
-constexpr std::array<uint32_t, 256> make_crc32_table() {
+ * Function for FLASH Memory
+constexpr  std::array<uint32_t, 256> crc32k9_init_table()
+{
     std::array<uint32_t, 256> table{};
-    for (size_t i = 0; i < 256; ++i) {
-        uint32_t crc = i;
-        for (int j = 0; j < 8; ++j) {
-            crc = (crc & 1) ? (crc >> 1) ^ 0xEDB88320 : crc >> 1;
+
+
+    for (uint32_t i = 0; i < 256; i++)
+    {
+        uint32_t crc = (i << 24);							// Index
+        for (int j = 0; j < 8; j++) {
+            if((crc & 0x80000000) != 0)
+            {
+                crc = (crc << 1) ^ CRC32K9_POLYNOMIAL;
+            }
+            else {
+                crc <<= 1;		// oder Bitverschiebung
+            }
         }
         table[i] = crc;
     }
     return table;
-}*/
 
-
-/*
- * void crc32k9_init_table(uint32_t table[TABLE_SIZE])
-{
-
-	for (uint32_t i = 0; i < TABLE_SIZE; i++)
-	{
-		uint32_t crc = i;							// Index
-		for (int j = 0; j < 8; j++){
-			if(crc & 1){
-				crc = (crc >> 1)^ CRC32K9_POLYNOMIAL;
-			} else {
-				crc >>= 1;		// oder Bitverschiebung
-			}
-		}
-		table[i] = crc;
-	}
 }
- */
+
+constexpr auto CRC32_TABLE = crc32k9_init_table();*/
+
+void crc32k9_init_table_ram(uint32_t arr[TABLE_SIZE], uint32_t polynomial);
+uint32_t crc32_calc(const uint8_t data[8], const uint32_t crc32_array[256]);
+
+
+#endif /* INC_CRC32_H_ */
+
+
+

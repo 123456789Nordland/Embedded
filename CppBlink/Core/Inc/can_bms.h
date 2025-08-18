@@ -124,26 +124,28 @@ private:
 // Transmit************************************************************
 class can_msg_transmit {
 public:
-	void trm_can_msg_j1939(can_msg_j1939 *msg, uint32_t cyclusTime){
+	void trm_can_msg_j1939(can_msg_j1939 *msg, uint32_t cyclusTime)
+	{
 
 		static uint32_t trm_cnt;
 		trm_cnt += CYCLE_TIME;
 
 			if (trm_cnt == msg->getTransmitRate())
 			{
-				msg->fillTxData();
+				//msg->fillTxData();
 				if (HAL_CAN_AddTxMessage(&hcan2, msg->getTxHeader(), msg->getTxData(), msg->getTxMailbox()) != HAL_OK)
 					 {
 							            // Falls alle 3 Mailboxen voll sind oder Fehler
-					 }
-				trm_cnt = 0;}
-
+			          }
+				trm_cnt = 0;
 			}
+
+	}
 
 };
 extern can_msg_j1939 test_msg;
 extern HVESSC1_PGN_6912_Rx trm_HVESSC1_PGN_6912;
 extern HVESSC1_PGN_6912_SHM_Rx trm_HVESSC1_PGN_6912_SHM;
-extern can_msg_transmit trm_can1;
+extern can_msg_transmit trm_can2;
 
 #endif /* INC_CAN_BMS_H_ */

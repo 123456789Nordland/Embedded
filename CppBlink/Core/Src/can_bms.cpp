@@ -16,4 +16,4 @@ HVESSC1_PGN_6912_Rx trm_HVESSC1_PGN_6912;
 HVESSC1_PGN_6912_SHM_Rx trm_HVESSC1_PGN_6912_SHM;
 
 // transmit!
-can_msg_transmit trm_can1;
+can_msg_transmit trm_can2;
