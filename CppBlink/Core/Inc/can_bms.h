@@ -61,7 +61,7 @@ public:
 	    TxData[4]  = 0;
 	    TxData[5]  = 0;
 	    TxData[6] = 0; // HS_Ctl1Ctr_Rx1;
-	    TxData[7] = 0; // HS_Ctl1CRC_Rx1;
+	    TxData[7] = 10; // HS_Ctl1CRC_Rx1;
 	         }
 
     void SetHS_HiUBusCnctCmd_Rx1(uint8_t val)	 		{HS_HiUBusCnctCmd_Rx1 = val; }
@@ -71,9 +71,9 @@ public:
     void SetHS_CellBalnCmd_Rx1(uint8_t val) 			{HS_CellBalnCmd_Rx1 = val; }
     void SetHS_EnaIntChrgrCmd_Rx1(uint8_t val)	 		{HS_EnaIntChrgrCmd_Rx1 = val; }
     void SetHS_OperConsent_Rx1(uint8_t val) 			{HS_OperConsent_Rx1 = val; }
-    void SetHS_HiUBusHiSideRestrCnctReq_Rx1(uint8_t val) {HS_HiUBusHiSideRestrCnctReq_Rx1 = val; }
+    void SetHS_HiUBusHiSideRestrCnctReq_Rx1(uint8_t val) {HS_HiUBusLoSideRestrCnctReq_Rx1 = val; }
 
-private:
+protected:
 
     // Variablen
     uint8_t HS_HiUBusCnctCmd_Rx1;			     	// Command to connect the High Voltage Energy Storage System (or Pack 1 in systems with only one pack) to the high-voltage bus.  The emergency contactor closure request may be used in situations where one or more faults in the hybrid powertrain prevent norm

@@ -27,8 +27,8 @@ extern "C" {
 
 /* USER CODE BEGIN PV */
 uint32_t crc32_array[TABLE_SIZE] = {0};
-uint8_t dataRx[8] = {0};
-const uint8_t* p_dataRx = dataRx;
+
+const uint8_t* p_dataRx;
 uint32_t crc32_sum;
 /* USER CODE END PV */
 
@@ -44,11 +44,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if (htim -> Instance == TIM1){
 		 //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
 
-		trm_HVESSC1_PGN_6912.SetHS_HiUBusCnctCmd_Rx1(0);
+		trm_HVESSC1_PGN_6912.SetHS_HiUBusCnctCmd_Rx1(2);
+		trm_HVESSC1_PGN_6912.SetHS_PwrDwnCmd_Rx1(3);
+		trm_HVESSC1_PGN_6912.SetHS_HiUBusHiSideRestrCnctReq_Rx1(4);
+		trm_HVESSC1_PGN_6912.SetHS_CellBalnCmd_Rx1(2);
 
 		trm_HVESSC1_PGN_6912.fillTxData();				// data is calculated, variables are not changing
 		p_dataRx = trm_HVESSC1_PGN_6912.getTxData();		// pointer to data of trm_HVESSC1_PGN_6912
 		crc32_sum = crc32_calc(p_dataRx, crc32_array);		// crc32 calculation
+
+
 
 		 trm_can2.trm_can_msg_j1939(&trm_HVESSC1_PGN_6912_SHM, CYCLE_TIME);		// message
 		 trm_can2.trm_can_msg_j1939(&trm_HVESSC1_PGN_6912, CYCLE_TIME);			// shm
